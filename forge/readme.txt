@@ -20,7 +20,7 @@ Click import projects
 Select the forge folder
 Import all projects
 
-NOTE: You cannot run through this eclipse workspace.
+NOTE: You cannot run the minecraft client or server through this eclipse workspace.
 
 
 To build and run:
