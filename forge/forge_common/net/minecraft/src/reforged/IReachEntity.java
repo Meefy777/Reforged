@@ -1,17 +1,17 @@
-// Decompiled by Jad v1.5.8g. Copyright 2001 Pavel Kouznetsov.
-// Jad home page: http://www.kpdus.com/jad.html
-// Decompiler options: packimports(3) braces deadcode 
+/**
+ * This software is provided under the terms of the Minecraft Forge Public 
+ * License v1.0.
+ */
 
 package net.minecraft.src.reforged;
 
 import net.minecraft.src.ItemStack;
 
-// Referenced classes of package net.minecraft.src:
-//            ItemStack
-
 public interface IReachEntity
 {
+	// If this item is applicable to a custom range
     public abstract boolean reachEntityItemMatches(ItemStack itemstack);
 
+    // The maximum distance in meters/blocks
     public abstract float getReachEntity(ItemStack itemstack);
 }

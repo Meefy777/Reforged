@@ -9,6 +9,7 @@ import net.minecraft.src.Block;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
+import net.minecraft.src.reforged.ReforgedHooks;
 
 import java.util.*;
 
@@ -171,6 +172,8 @@ public class MinecraftForge {
     public static void killMinecraft(String modname, String msg) {
 	    throw new RuntimeException(modname+": "+msg);
     }
+    
+    public static boolean disableVersionCheckCrash = false;
 
     /**
      * Version checking.  Ensures that a sufficiently recent version of Forge
@@ -180,6 +183,14 @@ public class MinecraftForge {
      */
     public static void versionDetect(String modname,
 		    int major, int minor, int revision) {
+    	
+    	if (disableVersionCheckCrash) {
+    		// invoke static constructor for forgehooks
+    		ReforgedHooks.touch();
+    		System.out.println(modname + ": Forge version detect was called, but strict crashing is disabled. Expected version "+major+"."+minor+"."+revision);
+    		return;
+    	}
+    	
 	    if(major!=ForgeHooks.majorVersion) {
 		    killMinecraft(modname,"MinecraftForge Major Version Mismatch, expecting "+major+".x.x");
 	    } else if(minor!=ForgeHooks.minorVersion) {
@@ -202,6 +213,14 @@ public class MinecraftForge {
      */
     public static void versionDetectStrict(String modname,
 		    int major, int minor, int revision) {
+    	
+    	if (disableVersionCheckCrash) {
+    		// invoke static constructor for forgehooks
+    		ReforgedHooks.touch();
+    		System.out.println(modname + ": Forge version detect was called, but strict crashing is disabled. Expected version "+major+"."+minor+"."+revision);
+    		return;
+    	}
+    	
 	    if(major!=ForgeHooks.majorVersion) {
 		    killMinecraft(modname,"MinecraftForge Major Version Mismatch, expecting "+major+".x.x");
 	    } else if(minor!=ForgeHooks.minorVersion) {
@@ -214,21 +233,6 @@ public class MinecraftForge {
 		    killMinecraft(modname,"MinecraftForge Too Old, need at least "+major+"."+minor+"."+revision);
 	    }
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     
     // Ore Dictionary

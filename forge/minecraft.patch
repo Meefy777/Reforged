@@ -1410,6 +1410,49 @@ diff -rN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/WorldRen
 <     {
 <         tessellator = Tessellator.instance;
 <     }
+diff -rN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/mod_Reforged.java ../src_work/minecraft/net/minecraft/src/mod_Reforged.java
+0a1,40
+> /**
+>  * This software is provided under the terms of the Minecraft Forge Public 
+>  * License v1.0.
+>  */
+> 
+> package net.minecraft.src;
+> 
+> import net.minecraft.src.forge.ForgeHooks;
+> import net.minecraft.src.reforged.IReachEntity;
+> import net.minecraft.src.reforged.Reforged;
+> import net.minecraft.src.reforged.ReforgedHooks;
+> 
+> public class mod_Reforged extends BaseModMp implements IReachEntity {
+> 
+> 	final boolean testEnabled = false;
+> 	
+> 	public mod_Reforged() {
+> 		if (testEnabled)
+> 			Reforged.reachAdd(this);
+> 	}
+> 	
+> 	@Override
+> 	public String Version() {
+> 		return String.format("[Forge %d.%d.%d, Reforged %d.%d.%d]",
+>                 ForgeHooks.majorVersion,    	ForgeHooks.minorVersion, 	ForgeHooks.revisionVersion, 
+>                 ReforgedHooks.majorVersion,    	ReforgedHooks.minorVersion, ReforgedHooks.revisionVersion
+>                 );
+> 	}
+> 
+> 	@Override
+> 	public boolean reachEntityItemMatches(ItemStack itemstack) {
+> 		return testEnabled;
+> 	}
+> 
+> 	@Override
+> 	public float getReachEntity(ItemStack itemstack) {
+> 		return 100f;
+> 	}
+> 
+> }
+\ No newline at end of file
 diff -rN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/server/MinecraftServ# ../src_work/minecraft_server/net/minecraft/server/MinecraftServ#
 2c2,20
 < *** 332,369 ****
@@ -2461,3 +2504,46 @@ diff -rN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/W
 <     protected int autosavePeriod;
 ---
 >     public int autosavePeriod;
+diff -rN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/mod_Reforged.java ../src_work/minecraft_server/net/minecraft/src/mod_Reforged.java
+0a1,40
+> /**
+>  * This software is provided under the terms of the Minecraft Forge Public 
+>  * License v1.0.
+>  */
+> 
+> package net.minecraft.src;
+> 
+> import net.minecraft.src.forge.ForgeHooks;
+> import net.minecraft.src.reforged.IReachEntity;
+> import net.minecraft.src.reforged.Reforged;
+> import net.minecraft.src.reforged.ReforgedHooks;
+> 
+> public class mod_Reforged extends BaseModMp implements IReachEntity {
+> 
+> 	final boolean testEnabled = false;
+> 	
+> 	public mod_Reforged() {
+> 		if (testEnabled)
+> 			Reforged.reachAdd(this);
+> 	}
+> 	
+> 	@Override
+> 	public String Version() {
+> 		return String.format("[Forge %d.%d.%d, Reforged %d.%d.%d]",
+>                 ForgeHooks.majorVersion,    	ForgeHooks.minorVersion, 	ForgeHooks.revisionVersion, 
+>                 ReforgedHooks.majorVersion,    	ReforgedHooks.minorVersion, ReforgedHooks.revisionVersion
+>                 );
+> 	}
+> 
+> 	@Override
+> 	public boolean reachEntityItemMatches(ItemStack itemstack) {
+> 		return testEnabled;
+> 	}
+> 
+> 	@Override
+> 	public float getReachEntity(ItemStack itemstack) {
+> 		return 100f;
+> 	}
+> 
+> }
+\ No newline at end of file

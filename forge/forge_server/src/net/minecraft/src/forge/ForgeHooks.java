@@ -137,6 +137,10 @@ public class ForgeHooks {
 
 		// TODO: add other tool tables.
 	}
+	
+	public static void touch() {
+		// touch :)
+	}
 
 	public static final int majorVersion=1;
 	public static final int minorVersion=0;
