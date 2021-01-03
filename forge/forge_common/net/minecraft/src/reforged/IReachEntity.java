@@ -11,7 +11,6 @@ import net.minecraft.src.ItemStack;
 
 public interface IReachEntity
 {
-
     public abstract boolean reachEntityItemMatches(ItemStack itemstack);
 
     public abstract float getReachEntity(ItemStack itemstack);
