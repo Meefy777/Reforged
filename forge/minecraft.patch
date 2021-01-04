@@ -1748,7 +1748,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Loc.jav
 +}
 diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/mod_Reforged.java ../src_work/minecraft/net/minecraft/src/mod_Reforged.java
 --- ../src_base/minecraft/net/minecraft/src/mod_Reforged.java	1969-12-31 19:00:00.000000000 -0500
-+++ ../src_work/minecraft/net/minecraft/src/mod_Reforged.java	2021-01-03 21:46:46.706576300 -0500
++++ ../src_work/minecraft/net/minecraft/src/mod_Reforged.java	2021-01-04 17:01:47.743665800 -0500
 @@ -0,0 +1,61 @@
 +/**
 + * This software is provided under the terms of the Minecraft Forge Public 
@@ -1936,7 +1936,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerC
  
 diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerControllerSP.java ../src_work/minecraft/net/minecraft/src/PlayerControllerSP.java
 --- ../src_base/minecraft/net/minecraft/src/PlayerControllerSP.java	2021-01-03 20:24:41.862095000 -0500
-+++ ../src_work/minecraft/net/minecraft/src/PlayerControllerSP.java	2021-01-03 21:46:20.404894600 -0500
++++ ../src_work/minecraft/net/minecraft/src/PlayerControllerSP.java	2021-01-04 17:15:34.693766200 -0500
 @@ -5,6 +5,7 @@
  package net.minecraft.src;
  
@@ -1981,7 +1981,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerC
          }
          if(flag && flag1)
          {
-+        	if(Reforged.hasSAPI() && SAPI.interceptHarvest(mc.theWorld, mc.thePlayer, new Loc(i, j, k), i1, j1))
++        	if(Reforged.hasSAPI() && SAPI.interceptHarvest(mc.theWorld, (EntityPlayer)mc.thePlayer, new Loc(i, j, k), i1, j1))
 +        	{
 +        	    return flag;
 +        	}
@@ -2223,7 +2223,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderP
                  modelbiped.bipedHeadwear.showModel = i == 0;
 diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/SAPI.java ../src_work/minecraft/net/minecraft/src/SAPI.java
 --- ../src_base/minecraft/net/minecraft/src/SAPI.java	1969-12-31 19:00:00.000000000 -0500
-+++ ../src_work/minecraft/net/minecraft/src/SAPI.java	2021-01-03 21:45:29.639562100 -0500
++++ ../src_work/minecraft/net/minecraft/src/SAPI.java	2021-01-04 17:15:43.566576000 -0500
 @@ -0,0 +1,15 @@
 +package net.minecraft.src;
 +
@@ -2234,7 +2234,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/SAPI.ja
 +		return 0;
 +	}
 +
-+	public static boolean interceptHarvest(World theWorld, EntityPlayerSP thePlayer, Loc loc, int i1, int j1) {
++	public static boolean interceptHarvest(World theWorld, EntityPlayer thePlayer, Loc loc, int i1, int j1) {
 +		// TODO Auto-generated method stub
 +		return false;
 +	}
