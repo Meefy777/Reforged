@@ -8,11 +8,51 @@ package net.minecraft.src.reforged;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import net.minecraft.src.BaseMod;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
+import net.minecraft.src.ModLoader;
 import net.minecraft.src.forge.MinecraftForge;
 
 public class Reforged {
+	
+	private static boolean searchedForIDResolver; 
+	private static boolean foundIDResolver;
+	private static boolean searchedForSAPI;
+	private static boolean foundSAPI;
+	
+	public static boolean hasIDResolver() {
+		if (!searchedForIDResolver) {
+			searchedForIDResolver = true;
+			foundIDResolver = ModLoader.isModLoaded("mod_IDResolver");
+		}
+		return foundIDResolver;
+	}
+	
+	public static boolean hasSAPI() {
+		if (!searchedForSAPI) {
+			searchedForSAPI = true;
+			foundSAPI = hasClass("SAPI");
+		}
+		return foundSAPI;
+	}
+	
+	
+	 private static boolean hasClass(String s)
+	    {
+	        Class class1 = null;
+	        try
+	        {
+	            class1 = Class.forName(s);
+	            return true;
+	        }
+	        catch(ClassNotFoundException classnotfoundexception)
+	        {
+	            return false;
+	        }
+	    }
+	
+	
 
 	private static ArrayList<IReachEntity> reachesEntity = new ArrayList<IReachEntity>();
 
