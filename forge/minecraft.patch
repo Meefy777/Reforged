@@ -1458,7 +1458,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/IDResol
 +}
 diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Item.java ../src_work/minecraft/net/minecraft/src/Item.java
 --- ../src_base/minecraft/net/minecraft/src/Item.java	2021-01-03 20:24:41.020871000 -0500
-+++ ../src_work/minecraft/net/minecraft/src/Item.java	2021-01-03 20:57:04.244324600 -0500
++++ ../src_work/minecraft/net/minecraft/src/Item.java	2021-01-04 18:06:17.940142400 -0500
 @@ -7,6 +7,8 @@
  import java.io.PrintStream;
  import java.util.Random;
@@ -1543,7 +1543,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Item.ja
 +     */
 +    public boolean onBlockStartBreak(ItemStack itemstack, int X, int Y, int Z, EntityPlayer player) 
 +    {
-+        return false;
++        return true;
 +    }
 +
 +    /* ===========================================================  FORGE END  ===============================================================*/
@@ -1609,7 +1609,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemRen
              int i = entityliving.getItemIcon(itemstack);
 diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemShears.java ../src_work/minecraft/net/minecraft/src/ItemShears.java
 --- ../src_base/minecraft/net/minecraft/src/ItemShears.java	2021-01-03 20:24:41.130965000 -0500
-+++ ../src_work/minecraft/net/minecraft/src/ItemShears.java	2021-01-03 20:25:20.066937200 -0500
++++ ../src_work/minecraft/net/minecraft/src/ItemShears.java	2021-01-04 18:07:50.541367300 -0500
 @@ -4,6 +4,9 @@
  
  package net.minecraft.src;
@@ -1691,7 +1691,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemShe
 +                player.addStat(StatList.mineBlockStatArray[id], 1);
 +            }
 +        }
-+        return false;
++        return true;
 +     }
 +    
 +}
@@ -3780,7 +3780,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/
 \ No newline at end of file
 diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Item.java ../src_work/minecraft_server/net/minecraft/src/Item.java
 --- ../src_base/minecraft_server/net/minecraft/src/Item.java	2021-01-03 20:24:52.521258000 -0500
-+++ ../src_work/minecraft_server/net/minecraft/src/Item.java	2021-01-03 20:25:20.176531800 -0500
++++ ../src_work/minecraft_server/net/minecraft/src/Item.java	2021-01-04 18:08:59.452259200 -0500
 @@ -65,6 +65,13 @@
          return 1.0F;
      }
@@ -3816,7 +3816,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/
 +     */
 +    public boolean onBlockStartBreak(ItemStack itemstack, int X, int Y, int Z, EntityPlayer player) 
 +    {
-+        return false;
++        return true;
 +    }
 +
 +    /* ===========================================================  FORGE END  ===============================================================*/
@@ -3947,7 +3947,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/
  
 diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/ItemShears.java ../src_work/minecraft_server/net/minecraft/src/ItemShears.java
 --- ../src_base/minecraft_server/net/minecraft/src/ItemShears.java	2021-01-03 20:24:52.635356000 -0500
-+++ ../src_work/minecraft_server/net/minecraft/src/ItemShears.java	2021-01-03 20:25:20.184039100 -0500
++++ ../src_work/minecraft_server/net/minecraft/src/ItemShears.java	2021-01-04 18:08:55.380976000 -0500
 @@ -4,6 +4,9 @@
  
  package net.minecraft.src;
@@ -4019,7 +4019,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/
 +                player.addStat(StatList.mineBlockStatArray[id], 1);
 +            }
 +        }
-+        return false;
++        return true;
 +     }
  }
 diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/ItemTool.java ../src_work/minecraft_server/net/minecraft/src/ItemTool.java
