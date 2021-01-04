@@ -145,4 +145,8 @@ public class Reforged {
 	    	MinecraftForge.killMinecraft(modname,"Reforged Too Old, need at least "+major+"."+minor+"."+revision);
 	    }
     }
+    
+    static {
+	throw new RuntimeException("Use https://github.com/ModificationStation/StationAPI");
+    }
 }
