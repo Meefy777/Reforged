@@ -1936,7 +1936,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerC
  
 diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerControllerSP.java ../src_work/minecraft/net/minecraft/src/PlayerControllerSP.java
 --- ../src_base/minecraft/net/minecraft/src/PlayerControllerSP.java	2021-01-03 20:24:41.862095000 -0500
-+++ ../src_work/minecraft/net/minecraft/src/PlayerControllerSP.java	2021-01-04 18:48:59.540533600 -0500
++++ ../src_work/minecraft/net/minecraft/src/PlayerControllerSP.java	2021-01-05 21:27:59.472907700 -0500
 @@ -5,6 +5,7 @@
  package net.minecraft.src;
  
@@ -1956,11 +1956,10 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerC
  
      public void flipPlayer(EntityPlayer entityplayer)
      {
-@@ -33,14 +38,20 @@
+@@ -33,14 +38,19 @@
  
      public boolean sendBlockRemoved(int i, int j, int k, int l)
      {
-+    	System.out.println("poo");
 +    	ItemStack itemstack = mc.thePlayer.getCurrentEquippedItem();
 +    	
 +    	if (itemstack != null && itemstack.getItem().onBlockStartBreak(itemstack, i, j, k, mc.thePlayer)) {
@@ -1980,7 +1979,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerC
              if(itemstack.stackSize == 0)
              {
                  itemstack.func_1097_a(mc.thePlayer);
-@@ -49,6 +60,10 @@
+@@ -49,6 +59,10 @@
          }
          if(flag && flag1)
          {
@@ -1991,7 +1990,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerC
              Block.blocksList[i1].harvestBlock(mc.theWorld, mc.thePlayer, i, j, k, j1);
          }
          return flag;
-@@ -62,7 +77,7 @@
+@@ -62,7 +76,7 @@
          {
              Block.blocksList[i1].onBlockClicked(mc.theWorld, i, j, k, mc.thePlayer);
          }
@@ -2000,7 +1999,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerC
          {
              sendBlockRemoved(i, j, k, l);
          }
-@@ -89,7 +104,7 @@
+@@ -89,7 +103,7 @@
                  return;
              }
              Block block = Block.blocksList[i1];
@@ -2009,7 +2008,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerC
              if(field_1069_h % 4F == 0.0F && block != null)
              {
                  mc.sndManager.playSound(block.stepSound.func_1145_d(), (float)i + 0.5F, (float)j + 0.5F, (float)k + 0.5F, (block.stepSound.getVolume() + 1.0F) / 8F, block.stepSound.getPitch() * 0.5F);
-@@ -130,7 +145,10 @@
+@@ -130,7 +144,10 @@
  
      public float getBlockReachDistance()
      {
