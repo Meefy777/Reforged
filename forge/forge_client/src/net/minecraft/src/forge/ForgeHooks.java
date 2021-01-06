@@ -51,6 +51,12 @@ public class ForgeHooks {
 		ItemStack itemstack = player.inventory.getCurrentItem();
 		if(itemstack == null) return false;
 
+		return canToolHarvestBlock(bl, md, itemstack);
+	}
+	
+	public static boolean canToolHarvestBlock(Block bl, int md, ItemStack itemstack) {
+		
+		
 		List tc=(List)toolClasses.get(itemstack.itemID);
 		if(tc==null) return itemstack.canHarvestBlock(bl);
 		Object[] ta=tc.toArray();
