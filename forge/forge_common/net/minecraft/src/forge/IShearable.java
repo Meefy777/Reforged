@@ -2,9 +2,8 @@ package net.minecraft.src.forge;
 
 import java.util.ArrayList;
 
-import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.Block;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.MovingObjectPosition;
 import net.minecraft.src.World;
 
 /**
@@ -50,4 +49,13 @@ public interface IShearable
      * @return A ArrayList containing all items from this shearing. Possible to be null.
      */
     public ArrayList<ItemStack> onSheared(ItemStack item, World world, int X, int Y, int Z);
+    
+    /**
+     * Returns the speed that a block should be mined at
+     * 
+     * @param item The itemstack that is being used, Possible to be null
+     * @param block The block being mined
+     * @return Efficiency vs the block being mined
+     */
+    public float getStrVsBlock(ItemStack item, Block block, int md);
 }

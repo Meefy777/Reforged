@@ -8,26 +8,14 @@ package net.minecraft.src.reforged;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import net.minecraft.src.BaseMod;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.forge.MinecraftForge;
 
 public class Reforged {
 	
-	private static boolean searchedForIDResolver; 
-	private static boolean foundIDResolver;
 	private static boolean searchedForSAPI;
 	private static boolean foundSAPI;
-	
-	public static boolean hasIDResolver() {
-		if (!searchedForIDResolver) {
-			searchedForIDResolver = true;
-			foundIDResolver = ModLoader.isModLoaded("mod_IDResolver");
-		}
-		return foundIDResolver;
-	}
 	
 	public static boolean hasSAPI() {
 		if (!searchedForSAPI) {

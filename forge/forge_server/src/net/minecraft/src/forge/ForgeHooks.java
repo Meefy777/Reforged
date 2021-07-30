@@ -9,6 +9,7 @@ import net.minecraft.src.Block;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
+import net.minecraft.src.reforged.PaxelMaterialList;
 import net.minecraft.src.Item;
 import net.minecraft.src.EnumStatus;
 
@@ -61,18 +62,16 @@ public class ForgeHooks {
 		if(tc==null) return itemstack.canHarvestBlock(bl);
 		Object[] ta=tc.toArray();
 		String cls=(String)ta[0]; int hvl=(Integer)ta[1];
-
-		if (cls.equalsIgnoreCase("paxel")) {
-			return true;
-		}
 		
 		Integer bhl=(Integer)toolHarvestLevels.get(Arrays.asList(
 			bl.blockID,md,cls));
 		if(bhl==null) return itemstack.canHarvestBlock(bl);
 		if(bhl>hvl) return false;
+		if(cls.equalsIgnoreCase("paxel") && PaxelMaterialList.canPaxelHarvest(bl))
+			return itemstack.canHarvestBlock(bl);
 		return itemstack.canHarvestBlock(bl);
 	}
-
+	
 	public static float blockStrength(Block bl,
 			EntityPlayer player, int md) {
 		float bh=bl.getHardness(md);
@@ -91,11 +90,14 @@ public class ForgeHooks {
 		if(tc==null) return false;
 		Object[] ta=tc.toArray();
 		String cls=(String)ta[0];
-
-		if (cls.equalsIgnoreCase("paxel")) {
-			return true;
-		}
 		
+		boolean flag = toolEffectiveness.contains(Arrays.asList(bl.blockID,md,"pickaxe"));
+		boolean flag1 = toolEffectiveness.contains(Arrays.asList(bl.blockID,md,"axe"));
+		boolean flag2 = toolEffectiveness.contains(Arrays.asList(bl.blockID,md,"shovel"));
+
+		if (cls.equalsIgnoreCase("paxel") && (flag || flag1 || flag2))
+			return true;
+			
 		return toolEffectiveness.contains(Arrays.asList(
 			bl.blockID,md,cls));
 	}
