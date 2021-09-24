@@ -1,6 +1,6 @@
 diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Block.java ../src_work/minecraft/net/minecraft/src/Block.java
 --- ../src_base/minecraft/net/minecraft/src/Block.java	2021-01-03 20:24:39.956956000 -0500
-+++ ../src_work/minecraft/net/minecraft/src/Block.java	2021-01-06 14:13:20.236297200 -0500
++++ ../src_work/minecraft/net/minecraft/src/Block.java	2021-09-24 13:16:51.934859800 -0400
 @@ -3,6 +3,9 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -21,7 +21,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Block.j
 -        } else
 -        {
 +        
-+        if(Reforged.hasIDResolver()) {
++      /*  if(Reforged.hasIDResolver()) {
 +        	if(blocksList[i] != null || IDResolver.HasStoredID(i, true))
 +            {
 +                int j = IDResolver.GetConflictedBlockID(i, this);
@@ -34,13 +34,13 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Block.j
              blockMaterial = material;
              blocksList[i] = this;
              blockID = i;
-@@ -56,8 +65,27 @@
+@@ -56,8 +65,23 @@
              lightOpacity[i] = isOpaqueCube() ? 255 : 0;
              canBlockGrass[i] = !material.getCanBlockGrass();
              isBlockContainer[i] = false;
 -            return;
 -        }
-+        } else {
++        } else {*/
 +	        if(blocksList[i] != null)
 +	        {
 +	            throw new IllegalArgumentException((new StringBuilder()).append("Slot ").append(i).append(" is already occupied by ").append(blocksList[i]).append(" when adding ").append(this).toString());
@@ -56,15 +56,11 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Block.j
 +	            isBlockContainer[i] = false;
 +	            return;
 +	        }
-+        }
-+    }
-+    
-+    public static void touch() {
-+    	
++       // }
      }
  
      protected Block disableNeighborNotifyOnMetadataChange()
-@@ -270,25 +298,48 @@
+@@ -270,25 +294,48 @@
      {
          return 1;
      }
@@ -124,7 +120,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Block.j
      }
  
      public final void dropBlockAsItem(World world, int i, int j, int k, int l)
-@@ -302,17 +353,17 @@
+@@ -302,17 +349,17 @@
          {
              return;
          }
@@ -145,7 +141,21 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Block.j
              }
          }
  
-@@ -552,7 +603,9 @@
+@@ -345,6 +392,13 @@
+     {
+         return blockResistance / 5F;
+     }
++    
++    /* REFORGED: Return the block explosive resistance with metadata 'md'.
++     */
++    public float getExplosionResistance(Entity entity, int md)
++    {
++        return getExplosionResistance(entity);
++    }
+ 
+     public MovingObjectPosition collisionRayTrace(World world, int i, int j, int k, Vec3D vec3d, Vec3D vec3d1)
+     {
+@@ -552,7 +606,9 @@
      public void harvestBlock(World world, EntityPlayer entityplayer, int i, int j, int k, int l)
      {
          entityplayer.addStat(StatList.mineBlockStatArray[blockID], 1);
@@ -155,7 +165,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Block.j
      }
  
      public boolean canBlockStay(World world, int i, int j, int k)
-@@ -600,6 +653,80 @@
+@@ -600,6 +656,80 @@
          return blockMaterial.getMaterialMobility();
      }
  
@@ -236,7 +246,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Block.j
      static Class _mthclass$(String s)
      {
          try
-@@ -725,6 +852,7 @@
+@@ -725,6 +855,7 @@
      public static final Block redstoneRepeaterActive;
      public static final Block lockedChest;
      public static final Block trapdoor;
@@ -1370,7 +1380,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityS
 \ No newline at end of file
 diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Explosion.java ../src_work/minecraft/net/minecraft/src/Explosion.java
 --- ../src_base/minecraft/net/minecraft/src/Explosion.java	2021-01-03 20:24:40.737627000 -0500
-+++ ../src_work/minecraft/net/minecraft/src/Explosion.java	2021-01-03 20:25:20.053425600 -0500
++++ ../src_work/minecraft/net/minecraft/src/Explosion.java	2021-09-24 13:14:07.323707300 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -1379,8 +1389,11 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Explosi
  
  import java.util.*;
  
-@@ -65,7 +66,17 @@
+@@ -63,9 +64,20 @@
+                         int k4 = MathHelper.floor_double(d7);
+                         int l4 = MathHelper.floor_double(d9);
                          int i5 = worldObj.getBlockId(j4, k4, l4);
++                        int data = worldObj.getBlockMetadata(j4, k4, l4);
                          if(i5 > 0)
                          {
 -                            f1 -= (Block.blocksList[i5].getExplosionResistance(exploder) + 0.3F) * f2;
@@ -1392,7 +1405,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Explosi
 +                                        * f2;
 +                            } else {
 +                                f1 -= (Block.blocksList[i5]
-+                                        .getExplosionResistance(exploder) + 0.3F)
++                                        .getExplosionResistance(exploder, data) + 0.3F)
 +                                        * f2;
 +                            }
                          }
@@ -1400,12 +1413,13 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Explosi
                          {
 diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/forgedebug/BlockTest.java ../src_work/minecraft/net/minecraft/src/forgedebug/BlockTest.java
 --- ../src_base/minecraft/net/minecraft/src/forgedebug/BlockTest.java	1969-12-31 19:00:00.000000000 -0500
-+++ ../src_work/minecraft/net/minecraft/src/forgedebug/BlockTest.java	2021-01-06 01:28:49.720313700 -0500
-@@ -0,0 +1,31 @@
++++ ../src_work/minecraft/net/minecraft/src/forgedebug/BlockTest.java	2021-07-23 20:31:32.823556900 -0400
+@@ -0,0 +1,37 @@
 +package net.minecraft.src.forgedebug;
 +
 +import java.util.ArrayList;
 +
++import net.minecraft.src.Block;
 +import net.minecraft.src.BlockLeaves;
 +import net.minecraft.src.ItemStack;
 +import net.minecraft.src.World;
@@ -1429,6 +1443,11 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/forgede
 +		ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
 +		ret.add(new ItemStack(mod_ForgeDebug.test.blockID, 1, 0));
 +		return ret;
++	}
++
++	@Override
++	public float getStrVsBlock(ItemStack item, Block block, int md) {
++		return 0;
 +	}
 +	
 +
@@ -1566,7 +1585,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/forgede
 \ No newline at end of file
 diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/FurnaceRecipes.java ../src_work/minecraft/net/minecraft/src/FurnaceRecipes.java
 --- ../src_base/minecraft/net/minecraft/src/FurnaceRecipes.java	2021-01-03 20:24:40.749138000 -0500
-+++ ../src_work/minecraft/net/minecraft/src/FurnaceRecipes.java	2021-01-03 20:25:20.056428400 -0500
++++ ../src_work/minecraft/net/minecraft/src/FurnaceRecipes.java	2021-04-02 09:53:13.941331600 -0400
 @@ -4,6 +4,7 @@
  
  package net.minecraft.src;
@@ -1616,13 +1635,18 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Furnace
      public ItemStack getSmeltingResult(int i)
      {
          return (ItemStack)smeltingList.get(Integer.valueOf(i));
-@@ -48,7 +64,34 @@
+@@ -48,7 +64,39 @@
          return smeltingList;
      }
  
 -    private static final FurnaceRecipes smeltingBase = new FurnaceRecipes();
 -    private Map smeltingList;
 -
++    public Map getMetaList()
++    {
++        return metaSmeltingList;
++    }
++    
 +    /**
 +     * Add a metadata-sensitive furnace recipe
 +     * @param itemID The Item ID
@@ -1680,7 +1704,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/IDResol
 +}
 diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Item.java ../src_work/minecraft/net/minecraft/src/Item.java
 --- ../src_base/minecraft/net/minecraft/src/Item.java	2021-01-03 20:24:41.020871000 -0500
-+++ ../src_work/minecraft/net/minecraft/src/Item.java	2021-01-04 18:49:07.397356300 -0500
++++ ../src_work/minecraft/net/minecraft/src/Item.java	2021-07-24 09:37:42.820039500 -0400
 @@ -7,6 +7,8 @@
  import java.io.PrintStream;
  import java.util.Random;
@@ -1690,7 +1714,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Item.ja
  // Referenced classes of package net.minecraft.src:
  //            ItemStack, StatCollector, ItemSpade, EnumToolMaterial, 
  //            ItemPickaxe, ItemAxe, ItemFlintAndSteel, ItemFood, 
-@@ -29,12 +31,34 @@
+@@ -29,12 +31,30 @@
          bFull3D = false;
          hasSubtypes = false;
          containerItem = null;
@@ -1698,8 +1722,10 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Item.ja
 -        if(itemsList[256 + i] != null)
 -        {
 -            System.out.println((new StringBuilder()).append("CONFLICT @ ").append(i).toString());
+-        }
+-        itemsList[256 + i] = this;
 +        
-+        if (Reforged.hasIDResolver()) {
++       /* if (Reforged.hasIDResolver()) {
 +            i += 256;
 +            if(itemsList[i] != null || IDResolver.HasStoredID(i, false))
 +            {
@@ -1714,23 +1740,18 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Item.ja
 +            }
 +            shiftedIndex = i;
 +            itemsList[i] = this;
-+        } else {
++        } else {*/
 +        	shiftedIndex = 256 + i;
 +	        if(itemsList[256 + i] != null)
 +	        {
 +	            System.out.println((new StringBuilder()).append("CONFLICT @ ").append(i).toString());
 +	        }
 +	        itemsList[256 + i] = this;
-         }
--        itemsList[256 + i] = this;
-+    }
-+    
-+    public static void touch() {
-+    	
++        //}
      }
  
      public Item setIconIndex(int i)
-@@ -75,6 +99,13 @@
+@@ -75,6 +95,13 @@
          return 1.0F;
      }
  
@@ -1744,7 +1765,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Item.ja
      public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer entityplayer)
      {
          return itemstack;
-@@ -212,6 +243,27 @@
+@@ -212,6 +239,27 @@
      public void onCreated(ItemStack itemstack, World world, EntityPlayer entityplayer)
      {
      }
@@ -1831,7 +1852,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemRen
              int i = entityliving.getItemIcon(itemstack);
 diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemShears.java ../src_work/minecraft/net/minecraft/src/ItemShears.java
 --- ../src_base/minecraft/net/minecraft/src/ItemShears.java	2021-01-03 20:24:41.130965000 -0500
-+++ ../src_work/minecraft/net/minecraft/src/ItemShears.java	2021-01-04 18:49:24.366505300 -0500
++++ ../src_work/minecraft/net/minecraft/src/ItemShears.java	2021-07-30 08:51:11.152927400 -0400
 @@ -4,6 +4,9 @@
  
  package net.minecraft.src;
@@ -1851,7 +1872,30 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemShe
          {
              itemstack.damageItem(1, entityliving);
          }
-@@ -47,4 +50,64 @@
+@@ -32,6 +35,15 @@
+     {
+         return block.blockID == Block.web.blockID;
+     }
++    
++    public float getStrVsBlock(ItemStack itemstack, Block block, int md)
++    {
++    	if (block instanceof IShearable) {
++    		IShearable shear = (IShearable) block;
++    		return shear.getStrVsBlock(itemstack, block, md);
++    	}
++	    return getStrVsBlock(itemstack,block);
++    }
+ 
+     public float getStrVsBlock(ItemStack itemstack, Block block)
+     {
+@@ -42,9 +54,73 @@
+         if(block.blockID == Block.cloth.blockID)
+         {
+             return 5F;
+-        } else
+-        {
++        } 
++        else {
              return super.getStrVsBlock(itemstack, block);
          }
      }
@@ -1870,12 +1914,14 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemShe
 +            if (target.isShearable(itemstack, entity.worldObj, (int)entity.posX, (int)entity.posY, (int)entity.posZ))
 +            {
 +                ArrayList<ItemStack> drops = target.onSheared(itemstack, entity.worldObj, (int)entity.posX, (int)entity.posY, (int)entity.posZ);
-+                for(ItemStack stack : drops)
-+                {
-+                    EntityItem ent = entity.entityDropItem(stack, 1.0F);
-+                    ent.motionY += entity.rand.nextFloat() * 0.05F;
-+                    ent.motionX += (entity.rand.nextFloat() - entity.rand.nextFloat()) * 0.1F;
-+                    ent.motionZ += (entity.rand.nextFloat() - entity.rand.nextFloat()) * 0.1F;
++                if(drops != null) {
++	                for(ItemStack stack : drops)
++	                {
++	                    EntityItem ent = entity.entityDropItem(stack, 1.0F);
++	                    ent.motionY += entity.rand.nextFloat() * 0.05F;
++	                    ent.motionX += (entity.rand.nextFloat() - entity.rand.nextFloat()) * 0.1F;
++	                    ent.motionZ += (entity.rand.nextFloat() - entity.rand.nextFloat()) * 0.1F;
++	                }
 +                }
 +                itemstack.damageItem(1, entity);
 +            }
@@ -1899,15 +1945,17 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemShe
 +            if (target.isShearable(itemstack, player.worldObj, X, Y, Z))
 +            {
 +                ArrayList<ItemStack> drops = target.onSheared(itemstack, player.worldObj, X, Y, Z);
-+                for(ItemStack stack : drops)
-+                {
-+                    float f = 0.7F;
-+                    double d  = (double)(player.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
-+                    double d1 = (double)(player.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
-+                    double d2 = (double)(player.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
-+                    EntityItem entityitem = new EntityItem(player.worldObj, (double)X + d, (double)Y + d1, (double)Z + d2, stack);
-+                    entityitem.delayBeforeCanPickup = 10;
-+                    player.worldObj.entityJoinedWorld(entityitem);
++                if (drops != null) {
++	                for(ItemStack stack : drops)
++	                {
++	                    float f = 0.7F;
++	                    double d  = (double)(player.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
++	                    double d1 = (double)(player.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
++	                    double d2 = (double)(player.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
++	                    EntityItem entityitem = new EntityItem(player.worldObj, (double)X + d, (double)Y + d1, (double)Z + d2, stack);
++	                    entityitem.delayBeforeCanPickup = 10;
++	                    player.worldObj.entityJoinedWorld(entityitem);
++	                }
 +                }
 +                itemstack.damageItem(1, player);
 +                player.addStat(StatList.mineBlockStatArray[id], 1);
@@ -2033,8 +2081,8 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/mod_For
 +}
 diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/mod_Reforged.java ../src_work/minecraft/net/minecraft/src/mod_Reforged.java
 --- ../src_base/minecraft/net/minecraft/src/mod_Reforged.java	1969-12-31 19:00:00.000000000 -0500
-+++ ../src_work/minecraft/net/minecraft/src/mod_Reforged.java	2021-01-04 17:01:47.743665800 -0500
-@@ -0,0 +1,61 @@
++++ ../src_work/minecraft/net/minecraft/src/mod_Reforged.java	2021-07-24 09:32:14.896570700 -0400
+@@ -0,0 +1,36 @@
 +/**
 + * This software is provided under the terms of the Minecraft Forge Public 
 + * License v1.0.
@@ -2048,24 +2096,9 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/mod_Ref
 +import net.minecraft.src.reforged.Reforged;
 +import net.minecraft.src.reforged.ReforgedHooks;
 +
-+public class mod_Reforged extends BaseModMp implements IReachEntity {
-+
-+	final boolean testEnabled = false;
++public class mod_Reforged extends BaseModMp {
 +	
 +	public mod_Reforged() {
-+		if (testEnabled)
-+			Reforged.reachAdd(this);
-+		
-+		try {
-+			Block.touch();
-+			Item.touch();
-+		} catch(NoSuchMethodError e) {
-+			if (Reforged.hasIDResolver())
-+				MinecraftForge.killMinecraft("mod_Reforged", "Please install Reforged after IDResolver!");
-+			else 
-+				MinecraftForge.killMinecraft("mod_Reforged", "Block or Item was modified. Please fix your installation!");
-+		}
-+		
 +		try {
 +			PlayerControllerMP.touch();
 +			PlayerControllerSP.touch();
@@ -2083,16 +2116,6 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/mod_Ref
 +                ForgeHooks.majorVersion,    	ForgeHooks.minorVersion, 	ForgeHooks.revisionVersion, 
 +                ReforgedHooks.majorVersion,    	ReforgedHooks.minorVersion, ReforgedHooks.revisionVersion
 +                );
-+	}
-+
-+	@Override
-+	public boolean reachEntityItemMatches(ItemStack itemstack) {
-+		return testEnabled;
-+	}
-+
-+	@Override
-+	public float getReachEntity(ItemStack itemstack) {
-+		return 100f;
 +	}
 +
 +}
@@ -2975,7 +2998,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/serv
                }
 diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Block.java ../src_work/minecraft_server/net/minecraft/src/Block.java
 --- ../src_base/minecraft_server/net/minecraft/src/Block.java	2021-01-03 20:24:51.813649000 -0500
-+++ ../src_work/minecraft_server/net/minecraft/src/Block.java	2021-01-06 14:27:13.981720000 -0500
++++ ../src_work/minecraft_server/net/minecraft/src/Block.java	2021-09-24 13:23:20.052871900 -0400
 @@ -3,6 +3,8 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -3070,7 +3093,21 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/
              }
          }
  
-@@ -478,7 +506,9 @@
+@@ -290,6 +318,13 @@
+     {
+         return blockResistance / 5F;
+     }
++    
++    /* REFORGED: Return the block explosive resistance with metadata 'md'.
++     */
++    public float getExplosionResistance(Entity entity, int md)
++    {
++        return getExplosionResistance(entity);
++    }
+ 
+     public MovingObjectPosition collisionRayTrace(World world, int i, int j, int k, Vec3D vec3d, Vec3D vec3d1)
+     {
+@@ -478,7 +513,9 @@
      public void harvestBlock(World world, EntityPlayer entityplayer, int i, int j, int k, int l)
      {
          entityplayer.addStat(StatList.mineBlockStatArray[blockID], 1);
@@ -3080,7 +3117,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/
      }
  
      public boolean canBlockStay(World world, int i, int j, int k)
-@@ -526,6 +556,80 @@
+@@ -526,6 +563,80 @@
          return blockMaterial.getMaterialMobility();
      }
  
@@ -3161,7 +3198,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/
      static Class _mthclass$(String s)
      {
          try
-@@ -651,6 +755,7 @@
+@@ -651,6 +762,7 @@
      public static final Block redstoneRepeaterActive;
      public static final Block lockedChest;
      public static final Block trapdoor;
@@ -3988,7 +4025,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/
                      return new Packet23VehicleSpawn(trackedEntity, entitytrackerentry2.entityId);
 diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Explosion.java ../src_work/minecraft_server/net/minecraft/src/Explosion.java
 --- ../src_base/minecraft_server/net/minecraft/src/Explosion.java	2021-01-03 20:24:52.437686000 -0500
-+++ ../src_work/minecraft_server/net/minecraft/src/Explosion.java	2021-01-03 20:25:20.166523800 -0500
++++ ../src_work/minecraft_server/net/minecraft/src/Explosion.java	2021-09-24 13:18:07.571167000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -3997,8 +4034,11 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/
  
  import java.util.*;
  
-@@ -65,7 +66,16 @@
+@@ -63,9 +64,19 @@
+                         int k4 = MathHelper.floor_double(d7);
+                         int l4 = MathHelper.floor_double(d9);
                          int i5 = worldObj.getBlockId(j4, k4, l4);
++                        int data = worldObj.getBlockMetadata(j4, k4, l4);
                          if(i5 > 0)
                          {
 -                            f1 -= (Block.blocksList[i5].getExplosionResistance(exploder) + 0.3F) * f2;
@@ -4010,14 +4050,14 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/
 +					explosionX,explosionY,explosionZ,
 +					exploder) + 0.3F) * f2;
 +			    } else {
-+				    f1 -= (Block.blocksList[i5].getExplosionResistance(exploder) + 0.3F) * f2;
++				    f1 -= (Block.blocksList[i5].getExplosionResistance(exploder, data) + 0.3F) * f2;
 +			    }
                          }
                          if(f1 > 0.0F)
                          {
 diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/FurnaceRecipes.java ../src_work/minecraft_server/net/minecraft/src/FurnaceRecipes.java
 --- ../src_base/minecraft_server/net/minecraft/src/FurnaceRecipes.java	2021-01-03 20:24:52.441190000 -0500
-+++ ../src_work/minecraft_server/net/minecraft/src/FurnaceRecipes.java	2021-01-03 20:25:20.169525600 -0500
++++ ../src_work/minecraft_server/net/minecraft/src/FurnaceRecipes.java	2021-07-24 08:53:18.551613900 -0400
 @@ -4,6 +4,7 @@
  
  package net.minecraft.src;
@@ -4067,9 +4107,15 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/
      public ItemStack getSmeltingResult(int i)
      {
          return (ItemStack)smeltingList.get(Integer.valueOf(i));
-@@ -48,7 +64,34 @@
+@@ -47,8 +63,40 @@
+     {
          return smeltingList;
      }
++    
++    public Map getMetaList()
++    {
++        return metaSmeltingList;
++    }
  
 -    private static final FurnaceRecipes smeltingBase = new FurnaceRecipes();
 -    private Map smeltingList;
@@ -4294,7 +4340,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/
  
 diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/ItemShears.java ../src_work/minecraft_server/net/minecraft/src/ItemShears.java
 --- ../src_base/minecraft_server/net/minecraft/src/ItemShears.java	2021-01-03 20:24:52.635356000 -0500
-+++ ../src_work/minecraft_server/net/minecraft/src/ItemShears.java	2021-01-06 00:05:26.572653500 -0500
++++ ../src_work/minecraft_server/net/minecraft/src/ItemShears.java	2021-07-30 08:52:29.561689900 -0400
 @@ -4,6 +4,9 @@
  
  package net.minecraft.src;
@@ -4314,7 +4360,30 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/
          {
              itemstack.damageItem(1, entityliving);
          }
-@@ -47,4 +50,63 @@
+@@ -32,6 +35,15 @@
+     {
+         return block.blockID == Block.web.blockID;
+     }
++    
++    public float getStrVsBlock(ItemStack itemstack, Block block, int md)
++    {
++    	if (block instanceof IShearable) {
++    		IShearable shear = (IShearable) block;
++    		return shear.getStrVsBlock(itemstack, block, md);
++    	}
++	    return getStrVsBlock(itemstack,block);
++    }
+ 
+     public float getStrVsBlock(ItemStack itemstack, Block block)
+     {
+@@ -42,9 +54,73 @@
+         if(block.blockID == Block.cloth.blockID)
+         {
+             return 5F;
+-        } else
++        }
++        else
+         {
              return super.getStrVsBlock(itemstack, block);
          }
      }
@@ -4332,12 +4401,14 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/
 +            if (target.isShearable(itemstack, entity.worldObj, (int)entity.posX, (int)entity.posY, (int)entity.posZ))
 +            {
 +                ArrayList<ItemStack> drops = target.onSheared(itemstack, entity.worldObj, (int)entity.posX, (int)entity.posY, (int)entity.posZ);
-+                for(ItemStack stack : drops)
-+                {
-+                    EntityItem ent = entity.entityDropItem(stack, 1.0F);
-+                    ent.motionY += entity.rand.nextFloat() * 0.05F;
-+                    ent.motionX += (entity.rand.nextFloat() - entity.rand.nextFloat()) * 0.1F;
-+                    ent.motionZ += (entity.rand.nextFloat() - entity.rand.nextFloat()) * 0.1F;
++                if (drops != null) {
++	                for(ItemStack stack : drops)
++	                {
++	                    EntityItem ent = entity.entityDropItem(stack, 1.0F);
++	                    ent.motionY += entity.rand.nextFloat() * 0.05F;
++	                    ent.motionX += (entity.rand.nextFloat() - entity.rand.nextFloat()) * 0.1F;
++	                    ent.motionZ += (entity.rand.nextFloat() - entity.rand.nextFloat()) * 0.1F;
++	                }
 +                }
 +                itemstack.damageItem(1, entity);
 +            }
@@ -4361,15 +4432,17 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/
 +            if (target.isShearable(itemstack, player.worldObj, X, Y, Z))
 +            {
 +                ArrayList<ItemStack> drops = target.onSheared(itemstack, player.worldObj, X, Y, Z);
-+                for(ItemStack stack : drops)
-+                {
-+                    float f = 0.7F;
-+                    double d  = (double)(player.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
-+                    double d1 = (double)(player.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
-+                    double d2 = (double)(player.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
-+                    EntityItem entityitem = new EntityItem(player.worldObj, (double)X + d, (double)Y + d1, (double)Z + d2, stack);
-+                    entityitem.delayBeforeCanPickup = 10;
-+                    player.worldObj.entityJoinedWorld(entityitem);
++                if (drops != null) {
++	                for(ItemStack stack : drops)
++	                {
++	                    float f = 0.7F;
++	                    double d  = (double)(player.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
++	                    double d1 = (double)(player.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
++	                    double d2 = (double)(player.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
++	                    EntityItem entityitem = new EntityItem(player.worldObj, (double)X + d, (double)Y + d1, (double)Z + d2, stack);
++	                    entityitem.delayBeforeCanPickup = 10;
++	                    player.worldObj.entityJoinedWorld(entityitem);
++	                }
 +                }
 +                itemstack.damageItem(1, player);
 +                player.addStat(StatList.mineBlockStatArray[id], 1);
