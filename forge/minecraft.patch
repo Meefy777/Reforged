@@ -1413,8 +1413,8 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Explosi
                          {
 diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/forgedebug/BlockTest.java ../src_work/minecraft/net/minecraft/src/forgedebug/BlockTest.java
 --- ../src_base/minecraft/net/minecraft/src/forgedebug/BlockTest.java	1969-12-31 19:00:00.000000000 -0500
-+++ ../src_work/minecraft/net/minecraft/src/forgedebug/BlockTest.java	2021-07-23 20:31:32.823556900 -0400
-@@ -0,0 +1,37 @@
++++ ../src_work/minecraft/net/minecraft/src/forgedebug/BlockTest.java	2021-12-30 15:33:50.011019900 -0500
+@@ -0,0 +1,43 @@
 +package net.minecraft.src.forgedebug;
 +
 +import java.util.ArrayList;
@@ -1425,8 +1425,9 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/forgede
 +import net.minecraft.src.World;
 +import net.minecraft.src.mod_ForgeDebug;
 +import net.minecraft.src.forge.IShearable;
++import net.minecraft.src.reforged.IFuel;
 +
-+public class BlockTest extends BlockLeaves implements IShearable {
++public class BlockTest extends BlockLeaves implements IShearable, IFuel {
 +
 +	public BlockTest(int i, int j) {
 +		super(i, 1);
@@ -1448,6 +1449,11 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/forgede
 +	@Override
 +	public float getStrVsBlock(ItemStack item, Block block, int md) {
 +		return 0;
++	}
++
++	@Override
++	public int getFuelBurnTime(int md) {
++		return 100;
 +	}
 +	
 +
@@ -1548,18 +1554,19 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/forgede
 \ No newline at end of file
 diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/forgedebug/TestReach.java ../src_work/minecraft/net/minecraft/src/forgedebug/TestReach.java
 --- ../src_base/minecraft/net/minecraft/src/forgedebug/TestReach.java	1969-12-31 19:00:00.000000000 -0500
-+++ ../src_work/minecraft/net/minecraft/src/forgedebug/TestReach.java	2021-01-06 01:42:55.121300700 -0500
-@@ -0,0 +1,32 @@
++++ ../src_work/minecraft/net/minecraft/src/forgedebug/TestReach.java	2021-12-30 15:49:44.155284800 -0500
+@@ -0,0 +1,38 @@
 +package net.minecraft.src.forgedebug;
 +
 +import net.minecraft.src.EntityPlayer;
 +import net.minecraft.src.Item;
 +import net.minecraft.src.ItemStack;
 +import net.minecraft.src.mod_ForgeDebug;
++import net.minecraft.src.reforged.IFuel;
 +import net.minecraft.src.reforged.IReachEntity;
 +import net.minecraft.src.reforged.Reforged;
 +
-+public class TestReach extends Item implements IReachEntity  {
++public class TestReach extends Item implements IReachEntity, IFuel  {
 +
 +	public TestReach(int i) {
 +		super(i);
@@ -1581,6 +1588,11 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/forgede
 +    {
 +        return true;
 +    }
++
++	@Override
++	public int getFuelBurnTime(int md) {
++		return 100;
++	}
 +}
 \ No newline at end of file
 diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/FurnaceRecipes.java ../src_work/minecraft/net/minecraft/src/FurnaceRecipes.java
@@ -1704,7 +1716,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/IDResol
 +}
 diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Item.java ../src_work/minecraft/net/minecraft/src/Item.java
 --- ../src_base/minecraft/net/minecraft/src/Item.java	2021-01-03 20:24:41.020871000 -0500
-+++ ../src_work/minecraft/net/minecraft/src/Item.java	2021-07-24 09:37:42.820039500 -0400
++++ ../src_work/minecraft/net/minecraft/src/Item.java	2021-12-31 19:54:05.356302800 -0500
 @@ -7,6 +7,8 @@
  import java.io.PrintStream;
  import java.util.Random;
@@ -1765,7 +1777,22 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Item.ja
      public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer entityplayer)
      {
          return itemstack;
-@@ -212,6 +239,27 @@
+@@ -136,6 +163,14 @@
+     {
+         return false;
+     }
++    
++    /* Reforged:
++     * Metadata sensitive method
++     */
++    public boolean canHarvestBlock(Block block, int md)
++    {
++        return canHarvestBlock(block);
++    }
+ 
+     public void saddleEntity(ItemStack itemstack, EntityLiving entityliving)
+     {
+@@ -212,6 +247,27 @@
      public void onCreated(ItemStack itemstack, World world, EntityPlayer entityplayer)
      {
      }
@@ -2018,8 +2045,8 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Loc.jav
 +}
 diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/mod_ForgeDebug.java ../src_work/minecraft/net/minecraft/src/mod_ForgeDebug.java
 --- ../src_base/minecraft/net/minecraft/src/mod_ForgeDebug.java	1969-12-31 19:00:00.000000000 -0500
-+++ ../src_work/minecraft/net/minecraft/src/mod_ForgeDebug.java	2021-01-06 01:32:43.427327000 -0500
-@@ -0,0 +1,59 @@
++++ ../src_work/minecraft/net/minecraft/src/mod_ForgeDebug.java	2021-12-30 15:49:59.900700300 -0500
+@@ -0,0 +1,61 @@
 +package net.minecraft.src;
 +
 +import net.minecraft.src.forge.MinecraftForge;
@@ -2061,9 +2088,11 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/mod_For
 +		
 +		ModLoader.RegisterBlock(ore1);
 +		ModLoader.RegisterBlock(ore2);
++		ModLoader.RegisterBlock(test);
 +		
-+		ModLoader.AddShapelessRecipe(new ItemStack(metaTest, 64, 0), new Object[] {Block.dirt});
-+		ModLoader.AddShapelessRecipe(new ItemStack(metaTest, 64, 1), new Object[] {Block.sand});
++		ModLoader.AddShapelessRecipe(new ItemStack(testReach, 64), new Object[] {Block.dirt});
++		ModLoader.AddName(test, "fuel");
++		ModLoader.AddShapelessRecipe(new ItemStack(Block.stoneOvenIdle), new Object[] {Block.sand});
 +		
 +		FurnaceRecipes.smelting().addSmelting(metaTest.blockID, 0, new ItemStack(metaTest, 1, 1));
 +		
@@ -2755,10 +2784,32 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Tessell
 +    }
  
  }
+diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ThreadDownloadResources.java ../src_work/minecraft/net/minecraft/src/ThreadDownloadResources.java
+--- ../src_base/minecraft/net/minecraft/src/ThreadDownloadResources.java	2021-01-03 20:24:42.513155000 -0500
++++ ../src_work/minecraft/net/minecraft/src/ThreadDownloadResources.java	2021-12-30 15:40:11.908560900 -0500
+@@ -33,8 +33,7 @@
+     public void run()
+     {
+         try
+-        {
+-            URL url = new URL("http://s3.amazonaws.com/MinecraftResources/");
++        {URL url = new URL("https://resourceproxy.pymcl.net/MinecraftResources/");
+             DocumentBuilderFactory documentbuilderfactory = DocumentBuilderFactory.newInstance();
+             DocumentBuilder documentbuilder = documentbuilderfactory.newDocumentBuilder();
+             Document document = documentbuilder.parse(url.openStream());
 diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/TileEntityFurnace.java ../src_work/minecraft/net/minecraft/src/TileEntityFurnace.java
 --- ../src_base/minecraft/net/minecraft/src/TileEntityFurnace.java	2021-01-03 20:24:42.541678000 -0500
-+++ ../src_work/minecraft/net/minecraft/src/TileEntityFurnace.java	2021-01-03 20:25:20.105970900 -0500
-@@ -196,7 +196,7 @@
++++ ../src_work/minecraft/net/minecraft/src/TileEntityFurnace.java	2021-12-30 16:49:49.840679600 -0500
+@@ -4,6 +4,8 @@
+ 
+ package net.minecraft.src;
+ 
++import net.minecraft.src.forge.IShearable;
++import net.minecraft.src.reforged.IFuel;
+ 
+ // Referenced classes of package net.minecraft.src:
+ //            TileEntity, IInventory, ItemStack, NBTTagCompound, 
+@@ -196,7 +198,7 @@
          {
              return false;
          }
@@ -2767,7 +2818,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/TileEnt
          if(itemstack == null)
          {
              return false;
-@@ -222,12 +222,12 @@
+@@ -222,12 +224,12 @@
          {
              return;
          }
@@ -2781,6 +2832,24 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/TileEnt
 +        if(furnaceItemStacks[2].isItemEqual(itemstack))
          {
              furnaceItemStacks[2].stackSize += itemstack.stackSize;
+         }
+@@ -270,7 +272,16 @@
+         if(i == Block.sapling.blockID)
+         {
+             return 100;
+-        } else
++        }
++        if (itemstack.itemID >= Block.blocksList.length && itemstack.getItem() instanceof IFuel) {
++        	IFuel fuel = ((IFuel)itemstack.getItem());
++        	return fuel.getFuelBurnTime(itemstack.getItemDamage());
++        }
++        if (itemstack.itemID < Block.blocksList.length && Block.blocksList[itemstack.itemID] instanceof IFuel) {
++        	IFuel fuel = ((IFuel)Block.blocksList[itemstack.itemID]);
++        	return fuel.getFuelBurnTime(itemstack.getItemDamage());
++        }
++        else
+         {
+             return ModLoader.AddAllFuel(i);
          }
 diff -urN -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/TileEntityRendererPiston.java ../src_work/minecraft/net/minecraft/src/TileEntityRendererPiston.java
 --- ../src_base/minecraft/net/minecraft/src/TileEntityRendererPiston.java	2021-01-03 20:24:42.572204600 -0500
@@ -4173,7 +4242,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/
 \ No newline at end of file
 diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Item.java ../src_work/minecraft_server/net/minecraft/src/Item.java
 --- ../src_base/minecraft_server/net/minecraft/src/Item.java	2021-01-03 20:24:52.521258000 -0500
-+++ ../src_work/minecraft_server/net/minecraft/src/Item.java	2021-01-04 18:49:17.844537100 -0500
++++ ../src_work/minecraft_server/net/minecraft/src/Item.java	2021-12-31 20:13:35.785267400 -0500
 @@ -65,6 +65,13 @@
          return 1.0F;
      }
@@ -4188,7 +4257,19 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/
      public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer entityplayer)
      {
          return itemstack;
-@@ -187,6 +194,27 @@
+@@ -127,6 +134,11 @@
+         return false;
+     }
+ 
++    public boolean canHarvestBlock(Block block, int md)
++    {
++        return canHarvestBlock(block);
++    }
++    
+     public void saddleEntity(ItemStack itemstack, EntityLiving entityliving)
+     {
+     }
+@@ -187,6 +199,27 @@
      {
          return false;
      }
@@ -4606,8 +4687,12 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/
              ItemStack itemstack1 = craftMatrix.getStackInSlot(i);
 diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/TileEntityFurnace.java ../src_work/minecraft_server/net/minecraft/src/TileEntityFurnace.java
 --- ../src_base/minecraft_server/net/minecraft/src/TileEntityFurnace.java	2021-01-03 20:24:53.318943000 -0500
-+++ ../src_work/minecraft_server/net/minecraft/src/TileEntityFurnace.java	2021-01-03 20:25:20.201052500 -0500
-@@ -7,8 +7,8 @@
++++ ../src_work/minecraft_server/net/minecraft/src/TileEntityFurnace.java	2021-12-30 16:50:34.459210400 -0500
+@@ -4,11 +4,12 @@
+ 
+ package net.minecraft.src;
+ 
++import net.minecraft.src.reforged.IFuel;
  
  // Referenced classes of package net.minecraft.src:
  //            TileEntity, IInventory, ItemStack, NBTTagCompound, 
@@ -4618,7 +4703,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/
  //            EntityPlayer
  
  public class TileEntityFurnace extends TileEntity
-@@ -114,6 +114,20 @@
+@@ -114,6 +115,20 @@
          return 64;
      }
  
@@ -4639,7 +4724,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/
      public boolean isBurning()
      {
          return furnaceBurnTime > 0;
-@@ -127,7 +141,7 @@
+@@ -127,7 +142,7 @@
          {
              furnaceBurnTime--;
          }
@@ -4648,7 +4733,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/
          {
              if(furnaceBurnTime == 0 && canSmelt())
              {
-@@ -137,7 +151,13 @@
+@@ -137,7 +152,13 @@
                      flag1 = true;
                      if(furnaceItemStacks[1] != null)
                      {
@@ -4663,7 +4748,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/
                          if(furnaceItemStacks[1].stackSize == 0)
                          {
                              furnaceItemStacks[1] = null;
-@@ -176,7 +196,7 @@
+@@ -176,7 +197,7 @@
          {
              return false;
          }
@@ -4672,7 +4757,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/
          if(itemstack == null)
          {
              return false;
-@@ -192,10 +212,8 @@
+@@ -192,10 +213,8 @@
          if(furnaceItemStacks[2].stackSize < getInventoryStackLimit() && furnaceItemStacks[2].stackSize < furnaceItemStacks[2].getMaxStackSize())
          {
              return true;
@@ -4684,7 +4769,7 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/
      }
  
      public void smeltItem()
-@@ -204,16 +222,22 @@
+@@ -204,16 +223,22 @@
          {
              return;
          }
@@ -4711,22 +4796,32 @@ diff -urN -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/
          if(furnaceItemStacks[0].stackSize <= 0)
          {
              furnaceItemStacks[0] = null;
-@@ -242,9 +266,13 @@
+@@ -242,9 +267,22 @@
          if(i == Item.bucketLava.shiftedIndex)
          {
              return 20000;
+-        } else
 +        }
 +        if(i == Block.sapling.blockID)
 +        {
 +            return 100;
-         } else
++        } 
++        if (itemstack.itemID >= Block.blocksList.length && itemstack.getItem() instanceof IFuel) {
++        	IFuel fuel = ((IFuel)itemstack.getItem());
++        	return fuel.getFuelBurnTime(itemstack.getItemDamage());
++        }
++        if (itemstack.itemID < Block.blocksList.length && Block.blocksList[itemstack.itemID] instanceof IFuel) {
++        	IFuel fuel = ((IFuel)Block.blocksList[itemstack.itemID]);
++        	return fuel.getFuelBurnTime(itemstack.getItemDamage());
++        }
++        else
          {
 -            return i == Block.sapling.blockID ? 100 : ModLoader.AddAllFuel(i);
 +            return ModLoader.AddAllFuel(i);
          }
      }
  
-@@ -253,10 +281,8 @@
+@@ -253,10 +291,8 @@
          if(worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) != this)
          {
              return false;

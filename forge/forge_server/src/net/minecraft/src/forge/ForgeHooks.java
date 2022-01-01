@@ -59,17 +59,18 @@ public class ForgeHooks {
 		
 		
 		List tc=(List)toolClasses.get(itemstack.itemID);
-		if(tc==null) return itemstack.canHarvestBlock(bl);
+		Item item = Item.itemsList[itemstack.itemID];
+		if(tc==null) return item.canHarvestBlock(bl, md);
 		Object[] ta=tc.toArray();
 		String cls=(String)ta[0]; int hvl=(Integer)ta[1];
 		
 		Integer bhl=(Integer)toolHarvestLevels.get(Arrays.asList(
 			bl.blockID,md,cls));
-		if(bhl==null) return itemstack.canHarvestBlock(bl);
+		if(bhl==null) return item.canHarvestBlock(bl, md);
 		if(bhl>hvl) return false;
 		if(cls.equalsIgnoreCase("paxel") && PaxelMaterialList.canPaxelHarvest(bl))
-			return itemstack.canHarvestBlock(bl);
-		return itemstack.canHarvestBlock(bl);
+			return item.canHarvestBlock(bl, md);
+		return item.canHarvestBlock(bl, md);
 	}
 	
 	public static float blockStrength(Block bl,
